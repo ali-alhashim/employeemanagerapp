@@ -5,8 +5,7 @@
      <a class="nav-item text-white btn btn-outline-success" (click)="onOpenModal(newEmployee, 'add')">Add Employee</a>
 
      <form class="d-flex" role="search">
-       <input class="form-control me-2" type="search" placeholder="Search employee..." aria-label="Search" name="key" id="search">
-       <button class="text-white btn btn-outline-success" type="submit">Search</button>
+       <input #key="ngModel" ngModel (ngModelChange)="searchEmployee(key.value)" class="form-control me-2" type="search" placeholder="Search employee..." aria-label="Search" name="key" id="search">
      </form>
 
    </div>
@@ -48,25 +47,29 @@
  <!-- Edit Employee Modal -->
 <div class="modal fade" id="editEmployeeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editEmployeeModalLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-     <div class="modal-content">
-       <div class="modal-header">
-         <h1 class="modal-title fs-5" id="editEmployeeModalLabel">Edit New Employee</h1>
-         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-       </div>
-       <div class="modal-body">
-        <input type="text" name="id" class="form-control m-1" placeholder="Id" readonly/>
-        <input type="text" name="employeeCode" class="form-control m-1" placeholder="Employee Code" readonly/>
-        <input type="text" name="name" class="form-control m-1" placeholder="Name"/>
-        <input type="text" name="jobTitle" class="form-control m-1" placeholder="Job Title"/>
-        <input type="text" name="email" class="form-control m-1" placeholder="Email"/>
-        <input type="text" name="phone" class="form-control m-1" placeholder="Phone"/>
-        <input type="text" name="imageUrl" class="form-control m-1" placeholder="Image Url"/>
-       </div>
-       <div class="modal-footer">
-         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-         <button type="button" class="btn btn-primary">Update</button>
-       </div>
-     </div>
+
+      <form #updateForm="ngForm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="editEmployeeModalLabel">Edit New Employee</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <input ngModel="{{editEmployee?.id}}" type="text" name="id" class="form-control m-1" placeholder="Id" readonly/>
+              <input ngModel="{{editEmployee?.employeeCode}}" type="text" name="employeeCode" class="form-control m-1" placeholder="Employee Code" readonly/>
+              <input ngModel="{{editEmployee?.name}}" type="text" name="name" class="form-control m-1" placeholder="Name"/>
+              <input ngModel="{{editEmployee?.jobTitle}}" type="text" name="jobTitle" class="form-control m-1" placeholder="Job Title"/>
+              <input ngModel="{{editEmployee?.email}}" type="text" name="email" class="form-control m-1" placeholder="Email"/>
+              <input ngModel="{{editEmployee?.phone}}" type="text" name="phone" class="form-control m-1" placeholder="Phone"/>
+              <input ngModel="{{editEmployee?.imageUrl}}" type="text" name="imageUrl" class="form-control m-1" placeholder="Image Url"/>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button (click)="onUpdateEmployee(updateForm.value)" type="button" class="btn btn-primary">Update</button>
+            </div>
+          </div>
+    </form>
+
    </div>
  </div>
  <!-- /Add Employee Modal -->
@@ -85,7 +88,7 @@
        </div>
        <div class="modal-footer">
          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-         <button type="button" class="btn btn-danger">Delete</button>
+         <button (click)="onDeleteEmployee(deleteEmployeeId)" type="button" class="btn btn-danger">Delete</button>
        </div>
      </div>
    </div>
@@ -131,5 +134,16 @@
 
        
     </div>
+
+
+    <div class="row" *ngIf="employees?.length == 0">
+      <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">No Employees!</h4>
+        <p>No Employees ware found.</p>
+      </div>
+    </div>
+
+
+
 </div>
 <!--/container-->

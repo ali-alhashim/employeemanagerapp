@@ -21,7 +21,8 @@ export class AppComponent implements OnInit{
 
   
   public newEmployee:Employee = {} as Employee;
-
+  public editEmployee:Employee={} as Employee;
+  public deleteEmployeeId:number = 0;
   public employees:Employee[] = [];
   public employeeService!: EmployeeService;
 
@@ -40,9 +41,32 @@ export class AppComponent implements OnInit{
         console.log(this.employees); // Log employees to the console for debugging
       },
       (error: any) => {
-        console.error('Error fetching employees:', error); // Handle any errors here
+       alert(error.message);
       }
     );
+  }
+
+
+  public searchEmployee(key:string):void
+  {
+     const results:Employee[] = [];
+     for (const employee of this.employees)
+     {
+       if(  employee.name.toLowerCase().indexOf(key.toLowerCase()) !== -1
+         || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1
+         || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1
+         || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1
+         )
+       {
+        results.push(employee);
+       }
+     }
+
+     this.employees = results;
+     if(results.length ===0 || !key)
+     {
+       this.getEmployees();
+     }
   }
 
 
@@ -60,10 +84,14 @@ export class AppComponent implements OnInit{
      }
      else if(mode ==='edit')
       {
+       
+        this.editEmployee = employee;
+        
        button.setAttribute('data-bs-target','#editEmployeeModal');
       }
       else if(mode ==='delete')
       {
+         this.deleteEmployeeId = employee.id;
          button.setAttribute('data-bs-target','#deleteEmployeeModal');
       }
 
@@ -100,10 +128,55 @@ export class AppComponent implements OnInit{
           this.closeModal('addEmployeeModal');  // Close the modal programmatically
         },
         (error) => {
-          console.error('Error adding employee', error);
+          alert(error.message);
         }
       );
     }
   }
 
-}
+
+
+
+  onUpdateEmployee(employee: Employee): void {
+  
+      this.employeeService.updateEmployee(employee).subscribe(
+        (response) => {
+          console.log('Employee update successfully', response);
+          this.getEmployees();
+          this.closeModal('editEmployeeModal');
+        },
+        (error) => {
+          alert(error.message);
+        }
+      );
+    }
+
+
+
+
+    onDeleteEmployee(id: number): void {
+  
+      this.employeeService.deleteEmployeeById(id).subscribe(
+        (response) => {
+          console.log('Employee delete successfully', response);
+          this.getEmployees();
+          this.closeModal('deleteEmployeeModal');
+        },
+        (error) => {
+          alert(error.message);
+        }
+      );
+    }
+
+
+
+
+
+
+  }
+
+
+
+  
+
+
